@@ -1,4 +1,7 @@
 using ApplicationService.API.Filters;
+using ApplicationService.API.Infrastructure;
+using ApplicationService.API.UseCases.Clients.GetAll;
+using ApplicationService.API.UseCases.Clients.Register;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,13 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi();  
 
 // Adiciona serviços do Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMvc(option => option.Filters.Add(typeof(ExceptionFilter)));
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ExceptionFilter>();
+});
+
+builder.Services.AddDbContext<ApplicationServiceDbContext>();
+builder.Services.AddScoped<RegisterClientUseCase>();
+builder.Services.AddScoped<GetAllClientsUseCase>();
+
 
 var app = builder.Build();
 

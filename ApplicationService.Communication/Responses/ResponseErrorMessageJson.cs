@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-
 namespace ApplicationService.Communication.Responses;
 
 public class ResponseErrorMessageJson

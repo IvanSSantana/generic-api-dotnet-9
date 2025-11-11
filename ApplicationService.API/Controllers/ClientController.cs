@@ -1,3 +1,4 @@
+using ApplicationService.API.UseCases.Clients.GetAll;
 using ApplicationService.API.UseCases.Clients.Register;
 using ApplicationService.Communication.Requests;
 using ApplicationService.Communication.Responses;
@@ -9,16 +10,25 @@ namespace ApplicationService.API.Controllers;
 [ApiController]
 public class ClientController : ControllerBase
 {
+    private readonly RegisterClientUseCase _registerUseCase;
+    private readonly GetAllClientsUseCase _getAllClientsUseCase;
+
+    public ClientController(RegisterClientUseCase registerUseCase,
+        GetAllClientsUseCase getAllClientsUseCase)
+    {
+        _registerUseCase = registerUseCase;
+        _getAllClientsUseCase = getAllClientsUseCase;
+    }
+
     [HttpPost]
-    [ProducesResponseType(typeof(ResponseClientJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseErrorMessageJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorMessageJson), StatusCodes.Status500InternalServerError)]  
     public IActionResult Register([FromBody] RequestClientJson request)
     {
-        RegisterClientUseCase useCase = new();
-
-        var response = useCase.Execute(request);
+        var response = _registerUseCase.Execute(request);
 
         return Created(string.Empty, response);
-        
     }
 
     [HttpPut]
@@ -28,9 +38,18 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(ResponseAllClientsJson), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult GetAll()
     {
-        return Ok();
+        var response = _getAllClientsUseCase.Execute();
+
+        if (response.Clients.Count == 0)
+        {
+            return NoContent();
+        }
+
+        return Ok(response);
     }
 
     [HttpGet]
