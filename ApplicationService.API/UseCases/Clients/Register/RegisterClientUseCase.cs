@@ -1,10 +1,9 @@
 using ApplicationService.Communication.Responses;
 using ApplicationService.Communication.Requests;
 using ApplicationService.Exceptions.ExceptionsBase;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 using ApplicationService.API.Infrastructure;
 using ApplicationService.API.Entities;
+using ApplicationService.API.UseCases.Clients.SharedValidator;
 
 namespace ApplicationService.API.UseCases.Clients.Register;
 
@@ -39,7 +38,7 @@ public class RegisterClientUseCase
     
     public void Validate(RequestClientJson request)
     {
-        var validator = new RegisterClientValidator();
+        var validator = new RequestClientValidator();
 
         var result = validator.Validate(request);
 

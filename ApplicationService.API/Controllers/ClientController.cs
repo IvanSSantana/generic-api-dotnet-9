@@ -1,5 +1,6 @@
 using ApplicationService.API.UseCases.Clients.GetAll;
 using ApplicationService.API.UseCases.Clients.Register;
+using ApplicationService.API.UseCases.Clients.Update;
 using ApplicationService.Communication.Requests;
 using ApplicationService.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +13,20 @@ public class ClientController : ControllerBase
 {
     private readonly RegisterClientUseCase _registerUseCase;
     private readonly GetAllClientsUseCase _getAllClientsUseCase;
+    private readonly UpdateClientUseCase _updateClientUseCase;
 
     public ClientController(RegisterClientUseCase registerUseCase,
-        GetAllClientsUseCase getAllClientsUseCase)
+        GetAllClientsUseCase getAllClientsUseCase, UpdateClientUseCase updateClientUseCase)
     {
         _registerUseCase = registerUseCase;
         _getAllClientsUseCase = getAllClientsUseCase;
+        _updateClientUseCase = updateClientUseCase;
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorMessageJson), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseErrorMessageJson), StatusCodes.Status500InternalServerError)]  
+    [ProducesResponseType(typeof(ResponseErrorMessageJson), StatusCodes.Status500InternalServerError)]
     public IActionResult Register([FromBody] RequestClientJson request)
     {
         var response = _registerUseCase.Execute(request);
@@ -31,10 +34,16 @@ public class ClientController : ControllerBase
         return Created(string.Empty, response);
     }
 
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status204NoContent)] 
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status404NotFound)] 
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status400BadRequest)] 
+    [Route("{id}")]
     [HttpPut]
-    public IActionResult Update()
+    public IActionResult Update([FromRoute] Guid id, [FromBody] RequestClientJson request)
     {
-        return Ok();
+        _updateClientUseCase.Execute(id, request);
+
+        return NoContent();
     }
 
     [HttpGet]

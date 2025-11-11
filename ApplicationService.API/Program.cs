@@ -2,6 +2,8 @@ using ApplicationService.API.Filters;
 using ApplicationService.API.Infrastructure;
 using ApplicationService.API.UseCases.Clients.GetAll;
 using ApplicationService.API.UseCases.Clients.Register;
+using ApplicationService.API.UseCases.Clients.Update;
+using ApplicationService.API.UseCases.Products.Register;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,9 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddDbContext<ApplicationServiceDbContext>();
 builder.Services.AddScoped<RegisterClientUseCase>();
+builder.Services.AddScoped<RegisterProductUseCase>();
 builder.Services.AddScoped<GetAllClientsUseCase>();
+builder.Services.AddScoped<UpdateClientUseCase>();
 
 
 var app = builder.Build();
