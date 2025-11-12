@@ -1,4 +1,6 @@
+using ApplicationService.API.UseCases.Clients.Delete;
 using ApplicationService.API.UseCases.Clients.GetAll;
+using ApplicationService.API.UseCases.Clients.GetById;
 using ApplicationService.API.UseCases.Clients.Register;
 using ApplicationService.API.UseCases.Clients.Update;
 using ApplicationService.Communication.Requests;
@@ -14,13 +16,18 @@ public class ClientController : ControllerBase
     private readonly RegisterClientUseCase _registerUseCase;
     private readonly GetAllClientsUseCase _getAllClientsUseCase;
     private readonly UpdateClientUseCase _updateClientUseCase;
+    private readonly DeleteClientUseCase _deleteClientUseCase;
+    private readonly GetClientByIdUseCase _getClientByIdUseCase;
 
     public ClientController(RegisterClientUseCase registerUseCase,
-        GetAllClientsUseCase getAllClientsUseCase, UpdateClientUseCase updateClientUseCase)
+        GetAllClientsUseCase getAllClientsUseCase, UpdateClientUseCase updateClientUseCase,
+        DeleteClientUseCase deleteClientUseCase, GetClientByIdUseCase getClientByIdUseCase)
     {
         _registerUseCase = registerUseCase;
         _getAllClientsUseCase = getAllClientsUseCase;
         _updateClientUseCase = updateClientUseCase;
+        _deleteClientUseCase = deleteClientUseCase;
+        _getClientByIdUseCase = getClientByIdUseCase;
     }
 
     [HttpPost]
@@ -63,14 +70,23 @@ public class ClientController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
-    public IActionResult GetById([FromRoute] int id)
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetById([FromRoute] Guid id)
     {
-        return Ok();
+        var response = _getClientByIdUseCase.Execute(id);
+
+        return Ok(response);
     }
 
     [HttpDelete]
-    public IActionResult Delete()
+    [Route("{id}")]
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status204NoContent)] 
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status404NotFound)] 
+    public IActionResult Delete(Guid id)
     {
-        return Ok();
+        _deleteClientUseCase.Execute(id);
+
+        return NoContent();
     }
 }

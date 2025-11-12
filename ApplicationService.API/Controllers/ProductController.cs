@@ -1,3 +1,4 @@
+using ApplicationService.API.UseCases.Products.Delete;
 using ApplicationService.API.UseCases.Products.Register;
 using ApplicationService.Communication.Requests;
 using ApplicationService.Communication.Responses;
@@ -11,10 +12,14 @@ namespace ApplicationService.API.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly RegisterProductUseCase _registerUseCase;
+    private readonly DeleteProductUseCase _deleteProductUseCase;
+    
 
-    public ProductController(RegisterProductUseCase registerUseCase)
+    public ProductController(RegisterProductUseCase registerUseCase,
+        DeleteProductUseCase deleteProductUseCase)
     {
         _registerUseCase = registerUseCase;
+        _deleteProductUseCase = deleteProductUseCase;
     }
 
     [HttpPost]
@@ -27,5 +32,16 @@ public class ProductController : ControllerBase
         var response = _registerUseCase.Execute(clientId, request);
 
         return Created(string.Empty, response);
+    }
+
+    [HttpDelete]
+    [Route("{id}")]
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status204NoContent)] 
+    [ProducesResponseType(typeof(ResponseShortClientJson), StatusCodes.Status404NotFound)] 
+    public IActionResult Delete(Guid id)
+    {
+        _deleteProductUseCase.Execute(id);
+
+        return NoContent();
     }
 }

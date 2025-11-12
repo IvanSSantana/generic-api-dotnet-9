@@ -40,9 +40,9 @@ public class RegisterProductUseCase
     
     public void Validate(Guid clientId, RequestProductJson request)
     {
-        bool clientExists = _dbContext.Products.Any(product => product.ClientId == clientId);
+        bool clientExists = _dbContext.Clients.Any(client => client.Id == clientId);
 
-        if (clientExists) throw new NotFoundException("Cliente inexistente.");
+        if (!clientExists) throw new NotFoundException("Cliente inexistente.");
 
         var validator = new RequestProductValidator();
 

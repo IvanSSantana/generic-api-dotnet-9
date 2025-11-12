@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationService.API.Migrations
 {
     [DbContext(typeof(ApplicationServiceDbContext))]
-    [Migration("20251108124836_InitialCreate")]
+    [Migration("20251112210453_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -61,7 +61,25 @@ namespace ApplicationService.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("ApplicationService.API.Entities.Product", b =>
+                {
+                    b.HasOne("ApplicationService.API.Entities.Client", "Client")
+                        .WithMany("Products")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("ApplicationService.API.Entities.Client", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

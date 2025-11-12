@@ -7,5 +7,6 @@ public class Product
     public string Brand { get; set; } = String.Empty;
     public decimal Price { get; set; }
     public Guid ClientId { get; set; }
+    public Client Client { get; set; } = default!;
 }
 
